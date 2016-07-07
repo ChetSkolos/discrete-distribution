@@ -102,9 +102,7 @@ class fast_discrete_distribution {
     }
 
   private:
-    // TODO: Figure out how to replace size_t in Segment with result_type.
-    // GCC 4.8.4 refuses to compile it.
-    typedef std::pair<double, size_t> Segment;
+    typedef std::pair<double, result_type> Segment;
     typedef std::tuple<result_type, result_type, double> Bucket;
 
     void normalize_weights(const std::vector<double>& weights) {
@@ -124,10 +122,11 @@ class fast_discrete_distribution {
 
       // Two stacks in one vector.  First stack grows from the begining of the
       // vector. The second stack grows from the end of the vector.
+      // Note: typename added here to allow Segment to work with result_type
       std::vector<Segment> segments(N);
-      stack_view<Segment, std::vector<Segment>::iterator>
+      stack_view<Segment, typename std::vector<Segment>::iterator>
         small(segments.begin());
-      stack_view<Segment, std::vector<Segment>::reverse_iterator>
+      stack_view<Segment, typename std::vector<Segment>::reverse_iterator>
         large(segments.rbegin());
 
       // Split probabilities into small and large
